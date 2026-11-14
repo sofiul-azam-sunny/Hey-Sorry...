@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorry Box | Created by Sofiul Azam Sunny</title>
+    <!-- Google Fonts: Hind Siliguri, Poppins & Great Vibes (Romantic Cursive Font) -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Hind+Siliguri:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #feada6 100%);
+            font-family: 'Hind Siliguri', 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; 
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+            padding-bottom: 70px; 
+        }
+
+        /* আতশবাজির ক্যানভাস */
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* ব্যাকগ্রাউন্ডে ভাসমান ইমোজি অ্যানিমেশন */
+        .bg-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-heart {
+            position: absolute;
+            bottom: -10%;
+            animation: floatUp 8s linear infinite;
+            opacity: 0.85;
+            user-select: none;
+            color: initial;
+            -webkit-text-fill-color: initial;
+            background: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* স্ক্রিনের উপরে ডান কোণায় ছোট ও প্রফেশনাল ক্রিয়েটর ব্যাজ */
+        .creator-badge {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 4px 15px rgba(255, 42, 95, 0.12);
+            z-index: 100;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        /* সার্কেলের ভেতর ছোট ও প্রফেশনাল আইকন */
+        .creator-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 42, 95, 0.5);
+            background: rgba(255, 230, 238, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            box-shadow: 0 2px 8px rgba(255, 42, 95, 0.2);
+            animation: iconPulse 2s infinite ease-in-out;
+            flex-shrink: 0;
+        }
+
+        @keyframes iconPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 42, 95, 0.4); }
+            50% { transform: scale(1.12); box-shadow: 0 0 8px rgba(255, 42, 95, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 42, 95, 0.4); }
+        }
+
+        .creator-badge .creator-text {
+            font-size: 11px;
+            font-weight: 600;
+            color: #d81b60;
+        }
+
+        /* মেইন কার্ড */
+        .card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 28px;
+            padding: 40px 30px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(216, 27, 96, 0.15);
+            z-index: 10;
+        }
+
+        h1 {
+            color: #d81b60;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        p {
+            color: #555;
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        /* মেইন সরি বাটন */
+        .btn-main {
+            padding: 16px 36px;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff4d4d, #ff2a5f);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 42, 95, 0.4);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-main:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(255, 42, 95, 0.6);
+        }
+
+        .btn-main:disabled {
+            cursor: not-allowed;
+            animation: none;
+            background: #ff7b93;
+            box-shadow: none;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.6); }
+            70% { box-shadow: 0 0 0 18px rgba(255, 77, 77, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+        }
+
+        /* আরও উন্নত ও প্রিমিয়াম অ্যানিমেশনের জন্য স্মুথ ট্রানজিশন */
+        #btn-heart {
+            display: inline-block;
+            filter: grayscale(100%) brightness(0);
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.8s ease;
+        }
+
+        /* সরি কন্টেইনার */
+        #sorry-container {
+            margin-top: 25px;
+            display: none;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            border-radius: 18px;
+            background: rgba(255, 240, 245, 0.6);
+            border: 1px dashed rgba(255, 77, 77, 0.3);
+        }
+
+        #sorry-container::-webkit-scrollbar { width: 6px; }
+        #sorry-container::-webkit-scrollbar-thumb { background: #ff80ab; border-radius: 10px; }
+
+        .sorry-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #e91e63;
+            background: #ffffff;
+            padding: 6px 12px;
+            border-radius: 15px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            display: inline-block;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* ইন্টারেক্টিভ প্রশ্ন সেকশন */
+        #interactive-section {
+            display: none;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px dashed rgba(255, 77, 77, 0.2);
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-text {
+            color: #d81b60;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .interactive-btns {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            min-height: 60px;
+        }
+
+        .btn-choice {
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: 0.2s;
+            z-index: 50;
+        }
+
+        #btn-yes { background-color: #ff4d4d; }
+        #btn-no { background-color: #4caf50; }
+        #btn-no:hover { transform: scale(1.1); background-color: #45a049; }
+
+        /* ফাইনাল রোমান্টিক মেসেজ */
+        #final-love-msg {
+            display: none;
+            margin-top: 20px;
+            animation: zoomIn 0.6s ease-out;
+            line-height: 1.4;
+        }
+
+        .eng-love {
+            font-family: 'Great Vibes', cursive;
+            font-size: 46px;
+            color: #ff2a5f;
+            display: block;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 8px rgba(255, 42, 95, 0.25);
+        }
+
+        .bangla-love {
+            font-size: 18px; 
+            display: block; 
+            margin-top: 5px; 
+            color: #d81b60;
+            font-weight: 600;
+            text-shadow: 1px 1px 5px rgba(233, 30, 99, 0.15);
+        }
+
+        @keyframes zoomIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* একদম শেষের ফুটার এবং ইনস্টাগ্রাম লিংক স্টাইল */
+        .side-footer {
+            position: absolute;
+            bottom: 15px;
+            right: 0;
+            width: 100%;
+            padding-right: 20px;
+            text-align: right;
+            font-size: 11px;
+            color: #777;
+            opacity: 0.85;
+            z-index: 10;
+        }
+
+        .side-footer a {
+            color: #ff2a5f;
+            text-decoration: none;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        .side-footer a:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 480px) {
+            .creator-badge { top: 8px; right: 8px; padding: 4px 10px; }
+            .card { padding: 30px 18px; margin-top: 40px; }
+            h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- আতশবাজির জন্য ক্যানভাস -->
+    <canvas id="fireworks-canvas"></canvas>
+
+    <!-- ব্যাকগ্রাউন্ডের ভাসমান ইমোজি -->
+    <div class="bg-hearts" id="bg-hearts"></div>
+
+    <!-- স্ক্রিনের উপর কোণায় ছোট ও প্রফেশনাল ক্রিয়েটর ব্যাজ (ফেসবুক লিংক সহ) -->
+    <a href="https://www.facebook.com/share/19Zs3nZ3dA/" target="_blank" class="creator-badge">
+        <div class="creator-avatar">👾</div>
+        <span class="creator-text">Created by <b style="color: #ff2a5f;">Sofiul Azam Sunny</b> ✨</span>
+    </a>
+
+    <!-- মূল কার্ড -->
+    <div class="card">
+        <h1>অনেক রাগ করেছো? 🥺</h1>
+        <p>রাগ কমাতে নিচের বাটনটাতে একটা ক্লিক করেই দেখো...😅</p>
+        
+        <button id="main-btn" class="btn-main" onclick="startMagic()">Click Here <span id="btn-heart">💔</span></button>
+        
+        <div id="sorry-container"></div>
+
+        <div id="interactive-section">
+            <h2 class="question-text">এখনো কি রাগ করে আছো? 🥺</h2>
+            <div class="interactive-btns">
+                <button id="btn-yes" class="btn-choice" onmouseover="runAway()" onclick="runAway()">হ্যাঁ</button>
+                <button id="btn-no" class="btn-choice" onclick="sheSaidNo()">না</button>
+            </div>
+        </div>
+
+        <div id="final-love-msg">
+            <span class="eng-love">I Love You, Miss ❤️</span>
+            <span class="bangla-love">তুমি আমার চাওয়া-পাওয়ার পুরোটা জুড়ে শুধু একটাই নাম,<br>তোমাকে ছাড়া আমার এই জীবন একদম অর্থহীন! 💫</span>
+        </div>
+    </div>
+
+    <!-- একদম নিচে থাকা স্পন্সর টেক্সট (ইনস্টাগ্রাম লিংক সহ) -->
+    <div class="side-footer">
+        Sponsored & Created by <a href="https://www.instagram.com/sofiulazamsunny?psln=MWppMTBrNnJ1bTBtbw==" target="_blank">Sofiul Azam Sunny</a> ✨<br>
+        <span style="font-style: italic; font-size: 10px; color: #888; font-weight: 600;">Miss You the Elusive И... 🥀</span>
+    </div>
+
+    <script>
+        function createBgHearts() {
+            const container = document.getElementById('bg-hearts');
+            const emojis = ['❤️', '💔', '😓', '🥺', '🖤', '💖', '🙏🏼', '✨', '🥀'];
+            
+            for (let i = 0; i < 35; i++) { 
+                const emojiText = emojis[Math.floor(Math.random() * emojis.length)];
+                const heart = document.createElement('div');
+                heart.className = 'bg-heart';
+                heart.innerText = emojiText;
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 6) + 's';
+                heart.style.animationDelay = (Math.random() * 5) + 's';
+                
+                const size = Math.random() * 18 + 16;
+                heart.style.fontSize = size + 'px';
+                
+                container.appendChild(heart);
+            }
+        }
+        createBgHearts();
+
+        function startMagic() {
+            const mainBtn = document.getElementById('main-btn');
+            const btnHeart = document.getElementById('btn-heart');
+            const container = document.getElementById('sorry-container');
+            
+            // আরও স্লো, স্মুথ ও প্রিমিয়াম অ্যানিমেশন ইফেক্ট
+            btnHeart.style.transform = "scale(1.6) rotate(360deg)";
+            
+            setTimeout(() => {
+                btnHeart.style.filter = "none"; // কালো রঙ সরিয়ে স্বাভাবিক লাল করা
+                btnHeart.innerText = "❤️";
+            }, 400); // ঠিক মাঝপথে হার্টটি পাল্টে যাবে
+
+            setTimeout(() => {
+                btnHeart.style.transform = "scale(1) rotate(0deg)";
+            }, 800);
+
+            mainBtn.disabled = true;
+            
+            container.style.display = "flex";
+            container.innerHTML = ""; 
+            
+            let count = 0;
+            const totalSorry = 500;
+
+            const interval = setInterval(() => {
+                if (count >= totalSorry) {
+                    clearInterval(interval);
+                    document.getElementById('interactive-section').style.display = "block";
+                    return;
+                }
+                const span = document.createElement('span');
+                span.className = 'sorry-text';
+                span.innerText = "Sorry 🥺 ";
+                container.appendChild(span);
+                
+                container.scrollTop = container.scrollHeight;
+                count++;
+            }, 10);
+        }
+
+        function runAway() {
+            const btnYes = document.getElementById('btn-yes');
+            btnYes.style.position = 'fixed';
+            
+            const maxX = window.innerWidth - btnYes.offsetWidth - 20;
+            const maxY = window.innerHeight - btnYes.offsetHeight - 20;
+            
+            const randomX = Math.max(10, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(10, Math.floor(Math.random() * maxY));
+            
+            btnYes.style.left = randomX + 'px';
+            btnYes.style.top = randomY + 'px';
+        }
+
+        function sheSaidNo() {
+            document.getElementById('interactive-section').style.display = 'none';
+            document.getElementById('btn-yes').style.display = 'none';
+            document.getElementById('final-love-msg').style.display = 'block';
+            launchFireworks();
+        }
+
+        /* আতশবাজি (Fireworks) অ্যানিমেশন কোড */
+        function launchFireworks() {
+            const canvas = document.getElementById('fireworks-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+
+            const particles = [];
+            const colors = ['#ff2a5f', '#ffeb3b', '#00e5ff', '#ff4081', '#76ff03', '#ff9100', '#e040fb'];
+
+            function createBurst(x, y) {
+                const count = 65;
+                for (let i = 0; i < count; i++) {
+                    const angle = (Math.PI * 2 / count) * i + (Math.random() * 0.2);
+                    const speed = Math.random() * 6 + 2;
+                    particles.push({
+                        x: x,
+                        y: y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        alpha: 1,
+                        decay: Math.random() * 0.015 + 0.012,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        size: Math.random() * 3.5 + 2
+                    });
+                }
+            }
+
+            createBurst(canvas.width * 0.25, canvas.height * 0.35);
+            createBurst(canvas.width * 0.75, canvas.height * 0.35);
+            setTimeout(() => createBurst(canvas.width * 0.5, canvas.height * 0.25), 350);
+
+            const burstInterval = setInterval(() => {
+                const rx = Math.random() * (canvas.width * 0.8) + (canvas.width * 0.1);
+                const ry = Math.random() * (canvas.height * 0.5) + (canvas.height * 0.1);
+                createBurst(rx, ry);
+            }, 650);
+
+            setTimeout(() => clearInterval(burstInterval), 10000);
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.08; 
+                    p.vx *= 0.98;
+                    p.alpha -= p.decay;
+
+                    if (p.alpha <= 0) {
+                        particles.splice(i, 1);
+                        continue;
+                    }
+
+                    ctx.save();
+                    ctx.globalAlpha = p.alpha;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = p.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+    </script>
+
+</body>
+  </html>
+  
